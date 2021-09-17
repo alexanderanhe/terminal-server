@@ -7,13 +7,13 @@ const server = express()
   // .use((req, res) => res.sendFile(INDEX, { root: __dirname }))
   .listen(PORT, () => console.log(`Server is listening on ${PORT}`));;
 
-// const options = {
-//   cors: {
-//     origin: process.env.CORS_WEB || "http://localhost:3000",
-//     methods: ["GET", "POST"]
-//   }
-// };
-const io = socketIO(server); // , options
+const options = {
+  cors: {
+    origin: process.env.CORS_WEB || "http://localhost:3000",
+    methods: ["GET", "POST"]
+  }
+};
+const io = socketIO(server, options); // , options
 
 // server.get('/', (req, res) => {
 //   console.log('req.headers.host', req.headers.host);
