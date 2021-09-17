@@ -4,7 +4,7 @@ const socketIO = require('socket.io');
 const PORT = process.env.PORT || 5000;
 const INDEX = '/index.html';
 const server = express()
-  .use((req, res) => res.sendFile(INDEX, { root: __dirname }))
+  // .use((req, res) => res.sendFile(INDEX, { root: __dirname }))
   .listen(PORT, () => console.log(`Server is listening on ${PORT}`));;
 
 // const options = {
@@ -48,3 +48,5 @@ io.on('connection', socket => {
     console.log(err.message);
   }
 });
+
+setInterval(() => io.emit('time', new Date().toTimeString()), 1000);
