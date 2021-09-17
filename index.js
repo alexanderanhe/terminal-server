@@ -1,12 +1,11 @@
 const express = require('express');
-const app = express();
-const port = process.env.PORT || 5000;
-const http = require('http').createServer();
+const socketIO = require('socket.io');
 
-app.get('/', (req, res) => {
-  console.log('req.headers.host', req.headers.host);
-  res.send('Hello World!');
-})
+const PORT = process.env.PORT || 5000;
+const INDEX = '/index.html';
+const server = express()
+  .use((req, res) => res.sendFile(INDEX, { root: __dirname }))
+  .listen(PORT, () => console.log(`Server is listening on ${PORT}`));;
 
 const options = {
   cors: {
@@ -14,7 +13,12 @@ const options = {
     methods: ["GET", "POST"]
   }
 };
-const io = require('socket.io')(http, options);
+const io = socketIO(server, options);
+
+// server.get('/', (req, res) => {
+//   console.log('req.headers.host', req.headers.host);
+//   res.send('Hello World!');
+// });
 
 io.on('connection', socket => {
   
@@ -43,8 +47,4 @@ io.on('connection', socket => {
   } catch (err) {
     console.log(err.message);
   }
-});
-
-http.listen(port, () => {
-  console.log("Server is listening on ", port);
 });
