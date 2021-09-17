@@ -17,14 +17,32 @@ const options = {
 const io = require('socket.io')(http, options);
 
 io.on('connection', socket => {
-  const id = socket.handshake.query.id
-  socket.join(id);
-
-  socket.on('message', ({room, text}) => {
-    socket.broadcast.to(room).emit('receive', {
-      sender: id, text
+  
+  const { id, user: userJson } = socket.handshake.query;
+  try {
+    const user = JSON.parse(userJson);
+    console.log(`A user connected ${user.email}`);
+    socket.on("joinRoom", (room) => {
+      console.log(`User conected to ${room}`);
+      socket.join(room);
     });
-  });
+  
+    socket.on('message', ({room, message}) => {
+      socket.to(room).emit('receive', {
+        sender: userJson, message
+      });
+    });
+  
+    socket.on("typing", ({ room }) => {
+      socket.to(room).emit("typing", "Someone is typing");
+    });
+  
+    socket.on("stoppedTyping", ({ room }) => {
+      socket.to(room).emit("stoppedTyping");
+    });
+  } catch (err) {
+    console.log(err.message);
+  }
 });
 
 http.listen(port, () => {
