@@ -28,17 +28,14 @@ const client = redis.createClient({
 const redisGetAsync = promisify(client.get).bind(client);
 
 const saveMessage = async (room, message) => {
-  console.log("Saving message", room, message);
   const data = await redisGetAsync(room);
 
   // the first message in the chat room
   if (!data) {
-    console.log("NO DATA ON ROOM", room);
-    return client.set(room, "[]");
+    return client.set(room, JSON.stringify([message]));
   }
 
   const json = JSON.parse(data);
-  console.log("FIND DATA", data);
   json.push(message);
 
   client.set(room, JSON.stringify(json));
