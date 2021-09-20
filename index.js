@@ -55,7 +55,7 @@ io.on('connection', socket => {
       const messageData = await redisGetAsync(room);
       if (messageData) {
         // need to make sure that we are grabbing this history data on the frontend
-        socket.to(room).emit("history", messageData);
+        socket.emit("history", messageData);
       }
     });
   
