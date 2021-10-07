@@ -51,12 +51,12 @@ io.on('connection', socket => {
     socket.on("joinRoom", async (room) => {
       console.log(`User conected to ${room}`);
       socket.join(room);
-
       const messageData = await redisGetAsync(room);
       if (messageData) {
         // need to make sure that we are grabbing this history data on the frontend
         socket.emit("history", messageData);
       }
+      socket.emit("userjoinroom", user);
     });
   
     socket.on('message', ({room, message}) => {
@@ -68,12 +68,12 @@ io.on('connection', socket => {
       socket.to(room).emit('receive', messageContent);
     });
   
-    socket.on("typing", ({ room }) => {
-      socket.to(room).emit("typing", "Someone is typing");
+    socket.on("typing", (room) => {
+      socket.to(room).emit('usertyping', user);
     });
-  
-    socket.on("stoppedTyping", ({ room }) => {
-      socket.to(room).emit("stoppedTyping");
+    
+    socket.on("stoppedTyping", (room) => {
+      socket.to(room).emit('userstoppedtyping', user);
     });
   } catch (err) {
     console.log(err.message);
