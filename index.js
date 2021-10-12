@@ -25,6 +25,9 @@ const client = redis.createClient({
   port: process.env.REDIS_PORT || 6379,
   password: process.env.REDIS_PWD || "",
 });
+client.flushdb( function (err, succeeded) {
+  console.log(`Redis restart deleted ${succeeded}`); // will be true if successfull
+});
 const redisGetAsync = promisify(client.get).bind(client);
 
 const saveMessage = async (room, message) => {
